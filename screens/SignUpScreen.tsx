@@ -18,9 +18,10 @@ import { theme } from "@/contants/theme";
 import Input from "@/components/Input";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import ButtonModify from "@/components/Button";
-const LoginScreen = ({ navigation }: { navigation: any }) => {
+const SignUpScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordCf, setPasswordCf] = useState("");
   const handleLogin = () => {
     if (email === "admin" && password === "123456") {
       navigation.replace("Main");
@@ -34,12 +35,12 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
       <View style={styles.container}>
         <BackButton size={26} />
         <View>
-          <Text style={styles.welcomeText}>Hey 😉,</Text>
-          <Text style={styles.welcomeText}>Welcome back</Text>
+          <Text style={styles.welcomeText}>Hello 😊,</Text>
+          <Text style={styles.welcomeText}>Register to join</Text>
         </View>
         <View style={styles.form}>
           <Text style={{ fontSize: hp(1.5), color: theme.colors.textLight }}>
-            Please login to continue
+            Try to register a new account here
           </Text>
           <Input
             icon={<Fontisto name="email" size={24} color="black" />}
@@ -55,23 +56,29 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
             value={password}
             secureTextEntry={true}
           />
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
+          <Input
+            icon={<Feather name="lock" size={24} color="black" />}
+            placeholder="Enter your confirm password"
+            onChangeText={(value) => setPasswordCf(value)}
+            value={passwordCf}
+            secureTextEntry={true}
+          />
         </View>
         <ButtonModify
           title="Login"
-          onPress={() => navigation.replace("Main")}
+          onPress={() => navigation.replace("Login")}
         />
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account?</Text>
-          <Pressable onPress={() => navigation.push("SignUp")}>
+          <Text style={styles.footerText}>Already have an account?</Text>
+          <Pressable onPress={() => navigation.push("Login")}>
             <Text
               style={[
                 styles.footerText,
                 { color: theme.colors.backgroundlight, fontWeight: "bold" },
               ]}
             >
-              Sign Up
+              Login
             </Text>
           </Pressable>
         </View>
@@ -82,7 +89,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 45,
+    gap: 40,
     paddingHorizontal: wp(5),
   },
   welcomeImage: {
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    gap: 25,
+    gap: 20,
   },
   forgotPassword: {
     textAlign: "right",
@@ -116,4 +123,4 @@ const styles = StyleSheet.create({
     fontSize: hp(1.6),
   },
 });
-export default LoginScreen;
+export default SignUpScreen;

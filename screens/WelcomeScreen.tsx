@@ -1,34 +1,36 @@
-import {StyleSheet, View, Text } from 'react-native'
+import {StyleSheet, View, Text,Button } from 'react-native'
 import React from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { LinearGradient } from 'expo-linear-gradient'
+import { StatusBar } from 'expo-status-bar'
+import { wp } from '@/helpers/common'
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
+type RootStackParamList = {
+  Welcome: undefined;
+  Login: undefined;
+  // Add other screens here
+};
 const WelcomeScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
-    <ScreenWrapper bg="pink">
-      <Text>WelcomeScreen</Text>
+    <ScreenWrapper bg="white">
+      <StatusBar style='dark' />
+      <View style={styles.container}>
+    <Button title='Login' onPress={() => navigation.push('Login')} />
+      </View>
     </ScreenWrapper>
-//     <View style={styles.container}>
-//     <LinearGradient
-//       // Background Linear Gradient
-//       colors={['rgba(0,0,0,0.8)', 'transparent']}
-//       style={styles.background}
-//     />
-//     <LinearGradient
-//       // Button Linear Gradient
-//       colors={['#4c669f', '#3b5998', '#192f6a']}
-//       style={styles.button}>
-//       <Text style={styles.text}>Sign in with Facebook</Text>
-//     </LinearGradient>
-//   </View>
+
   )
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'orange',
+    justifyContent: 'space-around',
+    backgroundColor: 'white',
+    paddingHorizontal: wp(4),
   },
   background: {
     position: 'absolute',
