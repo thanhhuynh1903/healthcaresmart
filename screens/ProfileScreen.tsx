@@ -15,6 +15,8 @@ import TopTab from "@/components/TopTab"; // Ensure you have this component crea
 import { theme } from "@/contants/theme"; // Ensure this file exists and is configured
 import { hp } from "@/helpers/common"; // Ensure this helper function is available
 import { SafeAreaView } from "react-native-safe-area-context";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+
 const ProfileScreen: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   const navigation: any = useNavigation();
@@ -66,9 +68,9 @@ const ProfileScreen: React.FC = () => {
             <Text style={styles.statLabel}>Blood Group</Text>
           </View>
           <View style={styles.statBox}>
-            <Ionicons
-              name="heart-outline"
-              size={30}
+            <FontAwesome
+              name="handshake-o"
+              size={24}
               color={theme.colors.redrose || "#ff5a5f"}
             />
             <Text style={styles.statValue}>256</Text>
@@ -123,14 +125,13 @@ const ProfileScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom : 70,
+    marginBottom: 70,
     flex: 1,
     backgroundColor: "#f8f8f8",
   },
   scrollContent: {
     flexGrow: 1,
     padding: 20,
-    
   },
   header: {
     flexDirection: "row",
@@ -245,7 +246,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutButton: {
-    marginTop: 10,
     borderColor: "#ff5a5f",
   },
   logoutButtonText: {
