@@ -14,7 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import TopTab from "@/components/TopTab"; // Ensure you have this component created
 import { theme } from "@/contants/theme"; // Ensure this file exists and is configured
 import { hp } from "@/helpers/common"; // Ensure this helper function is available
-import { SafeAreaView } from "react-native-safe-area-context";
+import ScreenWrapper from "@/components/ScreenWrapper";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const ProfileScreen: React.FC = () => {
@@ -22,9 +22,9 @@ const ProfileScreen: React.FC = () => {
   const navigation: any = useNavigation();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper bg={"white"}>
       {/* Scrollable Content */}
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} >
         {/* Header */}
         <LinearGradient style={styles.header} colors={["#2193b0", "#6dd5ed"]}>
           <View>
@@ -119,19 +119,19 @@ const ProfileScreen: React.FC = () => {
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 70,
     flex: 1,
     backgroundColor: "#f8f8f8",
   },
   scrollContent: {
-    flexGrow: 1,
+    flexGrow: 1, 
     padding: 20,
+    minHeight: "100%",
   },
   header: {
     flexDirection: "row",
