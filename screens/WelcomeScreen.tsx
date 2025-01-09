@@ -1,56 +1,96 @@
-import {StyleSheet, View, Text,Button } from 'react-native'
-import React from 'react'
-import ScreenWrapper from '@/components/ScreenWrapper'
-import { LinearGradient } from 'expo-linear-gradient'
-import { StatusBar } from 'expo-status-bar'
-import { wp } from '@/helpers/common'
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import React from "react";
+import { StyleSheet, View, Text, Image } from "react-native";
+import ScreenWrapper from "@/components/ScreenWrapper";
+import { StatusBar } from "expo-status-bar";
+import { hp, wp } from "@/helpers/common";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import ButtonModify from "@/components/Button";
+import BackgroundCustom from "@/components/BackgroundCustom";
+import { theme } from "@/contants/theme";
 
 type RootStackParamList = {
   Welcome: undefined;
   Login: undefined;
-  // Add other screens here
+  SignUp: undefined;
 };
+
 const WelcomeScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   return (
     <ScreenWrapper bg="white">
-      <StatusBar style='dark' />
-      <View style={styles.container}>
-    <Button title='Login' onPress={() => navigation.push('Login')} />
-      </View>
+      {/* Sử dụng BackgroundCustom */}
+      <BackgroundCustom>
+        <StatusBar style="dark" />
+        <View style={styles.container}>
+          <Image
+            style={styles.welcomImage}
+            resizeMode="contain"
+            source={require("../assets/run02preview.png")}
+          />
+          <View style={{ gap: 10 }}>
+            <Text style={styles.title}> Welcome to SRCoach!!</Text>
+            <Text style={{ ...styles.punchline, color: theme.colors.textLight }}>
+              where experts will help you improve your health and monitor your
+              health online
+            </Text>
+          </View>
+          <View style={styles.footer}>
+            <ButtonModify
+              title="Login"
+              onPress={() => navigation.push("Login")}
+            />
+            <ButtonModify
+              buttonStyle={{
+                backgroundColor: "white",
+                borderColor: theme.colors.backgroundlight,
+                borderWidth: 1,
+              }}
+              textStyle={{
+                color: theme.colors.backgroundlight,
+                fontWeight: "bold",
+              }}
+              title="Sign Up"
+              onPress={() => navigation.push("SignUp")}
+            />
+          </View>
+        </View>
+      </BackgroundCustom>
     </ScreenWrapper>
+  );
+};
 
-  )
-}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: 'white',
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "transparent", // Đặt nền trong suốt để không xung đột với BackgroundCustom
     paddingHorizontal: wp(4),
   },
-  background: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: 300,
+  welcomImage: {
+    height: hp(50),
+    width: wp(100),
+    alignItems: "center",
   },
-  button: {
-    padding: 15,
-    alignItems: 'center',
-    borderRadius: 5,
+  title: {
+    color: theme.colors.text,
+    fontSize: hp(3),
+    textAlign: "center",
+    fontWeight: "800",
   },
-  text: {
-    backgroundColor: 'transparent',
-    fontSize: 15,
-    color: '#fff',
+  punchline: {
+    textAlign: "center",
+    paddingHorizontal: wp(10),
+    fontSize: hp(2),
+    color: theme.colors.text,
+  },
+  footer: {
+    gap: 10,
+    width: "100%",
   },
 });
 
-  
-export default WelcomeScreen
-
+export default WelcomeScreen;

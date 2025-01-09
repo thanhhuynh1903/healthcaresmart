@@ -65,7 +65,7 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
           />
         </View>
         <ButtonModify
-          title="Login"
+          title="Submit"
           onPress={() => navigation.replace("Login")}
         />
 

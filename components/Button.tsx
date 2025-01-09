@@ -62,5 +62,13 @@ const styles = StyleSheet.create({
     fontSize: hp(2.5),
     color: "white",
     fontWeight: "bold",
+  }, 
+  whiteButton: {
+    backgroundColor: "white",
+    borderColor: theme.colors.primary, // Adjust to your blue color
+    borderWidth: 1,
+  },
+  blueText: {
+    color: theme.colors.primary, // Adjust to your blue color
   },
 });

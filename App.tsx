@@ -7,7 +7,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
 import MapScreen from "./screens/MapScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import CommunityScreen from "./screens/CommunityScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { Ionicons } from "@expo/vector-icons";
 import WelcomeScreen from "./screens/WelcomeScreen";
@@ -15,11 +14,16 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import SignUpScreen from "./screens/SignUpScreen";
 import GroupScreen from "./screens/GroupScreen";
 import { theme } from "./contants/theme";
-
-
+import BLEScreen from "./screens/BLEScreen";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  BLEScreen: undefined;
 
+  // Add other screens here
+};
 const MainNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -59,15 +63,23 @@ const MainNavigator = () => (
     <Tab.Screen name="Map" component={MapScreen} />
     <Tab.Screen
       name="Dices"
-      component={HomeScreen} // Replace with your Dice Screen
+      component={() => null} // No direct screen here
       options={{
-        tabBarButton: (props) => (
-          <View {...props} style={styles.floatingButtonContainer}>
-            <View style={styles.floatingButton}>
-              <Ionicons name="dice-outline" size={30} color="#ffffff" />
-            </View>
-          </View>
-        ),
+        tabBarButton: () => {
+          //render type useNavigation here
+          const navigation =
+            useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+          return (
+            <TouchableOpacity
+              style={styles.floatingButtonContainer}
+              onPress={() => navigation.navigate("BLEScreen")} // Navigate to BLEScreen
+            >
+              <View style={styles.floatingButton}>
+                <Ionicons name="dice-outline" size={30} color="#ffffff" />
+              </View>
+            </TouchableOpacity>
+          );
+        },
       }}
     />
     <Tab.Screen name="Group" component={GroupScreen} />
@@ -96,6 +108,11 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="BLEScreen"
+            component={BLEScreen}
+            options={{ headerShown: false }} // No header if needed
+          />
+          <Stack.Screen
             name="Main"
             component={MainNavigator}
             options={{ headerShown: false }}
@@ -110,6 +127,7 @@ const styles = StyleSheet.create({
     top: -10,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 100,
   },
   floatingButton: {
     width: 70,
