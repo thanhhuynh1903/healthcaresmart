@@ -9,47 +9,99 @@ import {
   Platform,
   Alert,
 } from "react-native";
+import { BleManager, Device } from "react-native-ble-plx";
 import BackButton from "@/components/BackButton";
 import ScreenWrapper from "@/components/ScreenWrapper";
-const mockDevices = [
-  { id: "1", name: "Device 1" },
-  { id: "2", name: "Device 2" },
-  { id: "3", name: "Device 3" },
-];
 
 const BLEScreen = () => {
-  // const [devices, setDevices] = useState([]);
-  type Device = { id: string; name: string };
-
   const [devices, setDevices] = useState<Device[]>([]);
   const [scanning, setScanning] = useState(false);
-  // const [connectedDevice, setConnectedDevice] = useState(null);
-  const [connectedDevice, setConnectedDevice] = useState<{ id: string; name: string } | null>(null);
-  // Giả lập quá trình quét thiết bị BLE
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+
+  const bleManager = new BleManager();
+
+  // Request permissions for Bluetooth on Android
+  const requestPermissions = async () => {
+    if (Platform.OS === "android") {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      ]);
+      return (
+        granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
+        granted["android.permission.BLUETOOTH_SCAN"] === "granted" &&
+        granted["android.permission.BLUETOOTH_CONNECT"] === "granted"
+      );
+    }
+    return true;
+  };
+
+  // Scan for BLE devices
   const startScan = async () => {
+    const permissionGranted = await requestPermissions();
+    if (!permissionGranted) {
+      Alert.alert("Permission Denied", "Bluetooth permissions are required.");
+      return;
+    }
+
     setScanning(true);
+    setDevices([]); // Clear previous devices
+
+    bleManager.startDeviceScan(null, null, (error, device) => {
+      if (error) {
+        console.error("Scan error:", error);
+        setScanning(false);
+        return;
+      }
+
+      if (device && device.name) {
+        // Add device to the list if it's not already added
+        setDevices((prevDevices) => {
+          const exists = prevDevices.some((d) => d.id === device.id);
+          if (!exists) {
+            return [...prevDevices, device];
+          }
+          return prevDevices;
+        });
+      }
+    });
+
+    // Stop scanning after 10 seconds
     setTimeout(() => {
-      setDevices(mockDevices); // Gán danh sách thiết bị giả
+      bleManager.stopDeviceScan();
       setScanning(false);
-    }, 2000); // Giả lập quá trình quét trong 2 giây
+    }, 10000);
   };
 
-  // Giả lập kết nối với thiết bị BLE
-  const connectToDevice = async (device: any) => {
-    Alert.alert("Connected", `Connected to ${device.name}`);
-    setConnectedDevice(device); // Gán thiết bị đã kết nối
-  };
-
-  // Giả lập ngắt kết nối với thiết bị BLE
-  const disconnectDevice = async () => {
-    if (connectedDevice) {
-      Alert.alert("Disconnected", `Disconnected from ${connectedDevice?.name}`);
-      setConnectedDevice(null); // Xóa thiết bị đã kết nối
+  // Connect to a BLE device
+  const connectToDevice = async (device: Device) => {
+    try {
+      const connectedDevice = await device.connect();
+      await connectedDevice.discoverAllServicesAndCharacteristics();
+      setConnectedDevice(connectedDevice);
+      Alert.alert("Connected", `Connected to ${device.name}`);
+    } catch (error) {
+      console.error("Connection error:", error);
+      Alert.alert("Connection Failed", "Could not connect to the device.");
     }
   };
 
-  // Render từng thiết bị trong danh sách
-  const renderDeviceItem = ({ item }: { item: any }) => (
+  // Disconnect from the connected BLE device
+  const disconnectDevice = async () => {
+    if (connectedDevice) {
+      try {
+        await connectedDevice.cancelConnection();
+        Alert.alert("Disconnected", `Disconnected from ${connectedDevice.name}`);
+        setConnectedDevice(null);
+      } catch (error) {
+        console.error("Disconnection error:", error);
+      }
+    }
+  };
+
+  // Render each device in the list
+  const renderDeviceItem = ({ item }: { item: Device }) => (
     <TouchableOpacity
       style={styles.deviceItem}
       onPress={() => connectToDevice(item)}
@@ -59,39 +111,48 @@ const BLEScreen = () => {
     </TouchableOpacity>
   );
 
+  useEffect(() => {
+    return () => {
+      // Clean up BLE manager on component unmount
+      bleManager.destroy();
+    };
+  }, []);
+
   return (
     <ScreenWrapper bg={""}>
-    <View style={styles.container}>
-      <BackButton size={26}/>
-      <Text style={styles.header}>Bluetooth Devices</Text>
-      <TouchableOpacity style={styles.scanButton} onPress={startScan}>
-        <Text style={styles.scanButtonText}>
-          {scanning ? "Scanning..." : "Start Scan"}
-        </Text>
-      </TouchableOpacity>
-      <FlatList
-        data={devices}
-        keyExtractor={(item) => item.id}
-        renderItem={renderDeviceItem}
-        contentContainerStyle={styles.deviceList}
-        ListEmptyComponent={
-          !scanning ? <Text style={styles.noDevices}>No devices found.</Text> : null
-        }
-      />
-      {connectedDevice && (
-        <View style={styles.connectedContainer}>
-          <Text style={styles.connectedText}>
-            Connected to: {connectedDevice.name || "Unknown Device"}
+      <View style={styles.container}>
+        <BackButton size={26} />
+        <Text style={styles.header}>Bluetooth Devices</Text>
+        <TouchableOpacity style={styles.scanButton} onPress={startScan}>
+          <Text style={styles.scanButtonText}>
+            {scanning ? "Scanning..." : "Start Scan"}
           </Text>
-          <TouchableOpacity
-            style={styles.disconnectButton}
-            onPress={disconnectDevice}
-          >
-            <Text style={styles.disconnectButtonText}>Disconnect</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+        </TouchableOpacity>
+        <FlatList
+          data={devices}
+          keyExtractor={(item) => item.id}
+          renderItem={renderDeviceItem}
+          contentContainerStyle={styles.deviceList}
+          ListEmptyComponent={
+            !scanning ? (
+              <Text style={styles.noDevices}>No devices found.</Text>
+            ) : null
+          }
+        />
+        {connectedDevice && (
+          <View style={styles.connectedContainer}>
+            <Text style={styles.connectedText}>
+              Connected to: {connectedDevice.name || "Unknown Device"}
+            </Text>
+            <TouchableOpacity
+              style={styles.disconnectButton}
+              onPress={disconnectDevice}
+            >
+              <Text style={styles.disconnectButtonText}>Disconnect</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </ScreenWrapper>
   );
 };
