@@ -1,54 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Switch,
   TouchableOpacity,
   ScrollView,
+  Image,
+  FlatList,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { Button, Avatar } from "react-native-elements";
+import { Avatar } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
-import TopTab from "@/components/TopTab"; // Ensure you have this component created
-import { theme } from "@/contants/theme"; // Ensure this file exists and is configured
-import { hp } from "@/helpers/common"; // Ensure this helper function is available
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { theme } from "../contants/theme";
 import ScreenWrapper from "@/components/ScreenWrapper";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import BackButton from "@/components/BackButton";
+import { wp } from "@/helpers/common";
+
+const posts = [
+  { id: "1", image: "https://via.placeholder.com/150" },
+  { id: "2", image: "https://via.placeholder.com/150" },
+  { id: "3", image: "https://via.placeholder.com/150" },
+  { id: "4", image: "https://via.placeholder.com/150" },
+  { id: "5", image: "https://via.placeholder.com/150" },
+  { id: "6", image: "https://via.placeholder.com/150" },
+];
 
 const ProfileScreen: React.FC = () => {
-  const [isAvailable, setIsAvailable] = useState(false);
-  const navigation: any = useNavigation();
-
   return (
     <ScreenWrapper bg={"white"}>
-      {/* Scrollable Content */}
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} >
-        {/* Header */}
-        <LinearGradient style={styles.header} colors={["#2193b0", "#6dd5ed"]}>
-          <View>
-            <Avatar
-              title={"Shweta"}
-              source={{
-                uri: "https://img.lovepik.com/element/45016/4170.png_860.png",
-              }}
-              size="medium"
-              rounded
-              placeholderStyle={{ backgroundColor: "#ccc" }}
-              titleStyle={{ color: "#fff" }}
-            />
-          </View>
-          <View style={styles.headerContent}>
-            <Text style={styles.greeting}>Hello Shweta</Text>
-            <Text style={styles.subHeader}>
-              Yay! You have completed 56 days waiting time
-            </Text>
-          </View>
-        </LinearGradient>
-
-        {/* Stats Section */}
-        <View style={styles.statsContainer}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <BackButton size={26}/>
+      <View style={styles.profileInfo}>
+        <Avatar
+          rounded
+          size="large"
+          source={{
+            uri: "https://img.lovepik.com/element/45016/4170.png_860.png",
+          }}
+        />
+        <View style={styles.stats}>
           <View style={styles.statBox}>
             <Ionicons
               name="heart-outline"
@@ -56,7 +47,7 @@ const ProfileScreen: React.FC = () => {
               color={theme.colors.redrose || "#ff5a5f"}
             />
             <Text style={styles.statValue}>3</Text>
-            <Text style={styles.statLabel}>Life Saved</Text>
+            <Text style={styles.statLabel}>Life</Text>
           </View>
           <View style={styles.statBox}>
             <Ionicons
@@ -65,9 +56,9 @@ const ProfileScreen: React.FC = () => {
               color={theme.colors.redrose || "#ff5a5f"}
             />
             <Text style={styles.statValue}>B+</Text>
-            <Text style={styles.statLabel}>Blood Group</Text>
+            <Text style={styles.statLabel}>Blood</Text>
           </View>
-          <View style={styles.statBox}>
+          <View style={{...styles.statBox, marginTop: 6}}>
             <FontAwesome
               name="handshake-o"
               size={24}
@@ -77,96 +68,68 @@ const ProfileScreen: React.FC = () => {
             <Text style={styles.statLabel}>Appreciation</Text>
           </View>
         </View>
+      </View>
 
-        {/* Availability Toggle */}
-        <View style={styles.toggleContainer}>
-          <Text style={styles.toggleLabel}>I am available to donate</Text>
-          <Switch
-            value={isAvailable}
-            onValueChange={(value) => setIsAvailable(value)}
-          />
-        </View>
+      {/* Bio */}
+      <View style={styles.bioContainer}>
+        <Text style={styles.name}>Shweta Kumari</Text>
+        <Text style={styles.bio}>
+          🌍 Traveler | 📷 Photographer | 💻 Developer{"\n"}Life is about
+          creating stories. 🌟
+        </Text>
+      </View>
 
-        {/* Donation Date Section */}
-        <View style={styles.donationDateContainer}>
-          <View>
-            <Text style={styles.dateLabel}>Donation Date</Text>
-            <Text style={styles.dateValue}>Mar 11</Text>
-            <Text style={styles.dateSubText}>2 days left</Text>
-          </View>
-          <TouchableOpacity style={styles.calendarButton}>
-            <Text style={styles.calendarText}>📅</Text>
-          </TouchableOpacity>
-        </View>
+      {/* Edit Profile Button */}
+      <TouchableOpacity style={styles.editButton}>
+        <Text style={styles.editButtonText}>Edit Profile</Text>
+      </TouchableOpacity>
 
-        {/* Navigation Options */}
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Manage Address</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>My Request</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Rewards</Text>
-          </TouchableOpacity>
-          <Button
-            title="Logout"
-            type="outline"
-            onPress={() => navigation.navigate("Login")}
-            buttonStyle={styles.logoutButton}
-            titleStyle={styles.logoutButtonText}
-          />
-        </View>
-      </ScrollView>
+      {/* Posts Grid */}
+      <FlatList
+        data={posts}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Image source={{ uri: item.image }} style={styles.postImage} />
+        )}
+        contentContainerStyle={styles.postsGrid}
+      />
+    </ScrollView>
     </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f8f8f8",
-  },
-  scrollContent: {
-    flexGrow: 1, 
-    padding: 20,
-    minHeight: "100%",
+    flexGrow: 1,
+    backgroundColor: "#fff",
   },
   header: {
+    height: 120,
+    justifyContent: "center",
+
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  username: {
+    fontSize: 20,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  profileInfo: {
     flexDirection: "row",
     alignItems: "center",
     padding: 20,
-    marginHorizontal: -20,
-    marginTop: -20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  headerContent: {
-    marginLeft: 10,
-  },
-  greeting: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  subHeader: {
-    fontSize: 14,
-    color: "#fff",
-    marginTop: 5,
-  },
-  statsContainer: {
-    flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
+  },
+  stats: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    flex: 1,
+    marginLeft: 20,
   },
   statBox: {
     alignItems: "center",
@@ -177,79 +140,41 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   statLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  toggleLabel: {
-    fontSize: 16,
-    color: "#000",
-  },
-  donationDateContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  dateLabel: {
     fontSize: 14,
     color: "#666",
   },
-  dateValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#000",
+  bioContainer: {
+    paddingHorizontal: 20,
   },
-  dateSubText: {
-    fontSize: 12,
-    color: "#666",
-  },
-  calendarButton: {
-    backgroundColor: "#ff5a5f",
-    borderRadius: 10,
-    padding: 10,
-  },
-  calendarText: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  optionsContainer: {
-    marginTop: 20,
-    gap: 10,
-  },
-  option: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  optionText: {
+  name: {
     fontSize: 16,
-    color: "#000",
     fontWeight: "bold",
   },
-  logoutButton: {
-    borderColor: "#ff5a5f",
+  bio: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 5,
   },
-  logoutButtonText: {
-    color: "#ff5a5f",
+  editButton: {
+    margin: 20,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  editButtonText: {
+    color: "#000",
+    fontSize: 16,
+  },
+  postsGrid: {
+    paddingHorizontal: 10,
+  },
+  postImage: {
+    width: "30%",
+    aspectRatio: 1,
+    margin: "1.5%",
+    borderRadius: 5,
   },
 });
 
