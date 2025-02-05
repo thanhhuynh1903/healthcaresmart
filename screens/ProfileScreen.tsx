@@ -4,18 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Image,
   FlatList,
 } from "react-native";
 import { Avatar } from "react-native-elements";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { theme } from "../contants/theme";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import BackButton from "@/components/BackButton";
-import { wp } from "@/helpers/common";
 
 const posts = [
   { id: "1", image: "https://via.placeholder.com/150" },
@@ -29,72 +26,72 @@ const posts = [
 const ProfileScreen: React.FC = () => {
   return (
     <ScreenWrapper bg={"white"}>
-    <ScrollView contentContainerStyle={styles.container}>
-      <BackButton size={26}/>
-      <View style={styles.profileInfo}>
-        <Avatar
-          rounded
-          size="large"
-          source={{
-            uri: "https://img.lovepik.com/element/45016/4170.png_860.png",
-          }}
-        />
-        <View style={styles.stats}>
-          <View style={styles.statBox}>
-            <Ionicons
-              name="heart-outline"
-              size={30}
-              color={theme.colors.redrose || "#ff5a5f"}
-            />
-            <Text style={styles.statValue}>3</Text>
-            <Text style={styles.statLabel}>Life</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Ionicons
-              name="water-outline"
-              size={30}
-              color={theme.colors.redrose || "#ff5a5f"}
-            />
-            <Text style={styles.statValue}>B+</Text>
-            <Text style={styles.statLabel}>Blood</Text>
-          </View>
-          <View style={{...styles.statBox, marginTop: 6}}>
-            <FontAwesome
-              name="handshake-o"
-              size={24}
-              color={theme.colors.redrose || "#ff5a5f"}
-            />
-            <Text style={styles.statValue}>256</Text>
-            <Text style={styles.statLabel}>Appreciation</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Bio */}
-      <View style={styles.bioContainer}>
-        <Text style={styles.name}>Shweta Kumari</Text>
-        <Text style={styles.bio}>
-          🌍 Traveler | 📷 Photographer | 💻 Developer{"\n"}Life is about
-          creating stories. 🌟
-        </Text>
-      </View>
-
-      {/* Edit Profile Button */}
-      <TouchableOpacity style={styles.editButton}>
-        <Text style={styles.editButtonText}>Edit Profile</Text>
-      </TouchableOpacity>
-
-      {/* Posts Grid */}
       <FlatList
         data={posts}
         numColumns={3}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={
+          <>
+            <BackButton size={26} />
+            <View style={styles.profileInfo}>
+              <Avatar
+                rounded
+                size="large"
+                source={{
+                  uri: "https://img.lovepik.com/element/45016/4170.png_860.png",
+                }}
+              />
+              <View style={styles.stats}>
+                <View style={styles.statBox}>
+                  <Ionicons
+                    name="heart-outline"
+                    size={30}
+                    color={theme.colors.redrose || "#ff5a5f"}
+                  />
+                  <Text style={styles.statValue}>3</Text>
+                  <Text style={styles.statLabel}>Life</Text>
+                </View>
+                <View style={styles.statBox}>
+                  <Ionicons
+                    name="water-outline"
+                    size={30}
+                    color={theme.colors.redrose || "#ff5a5f"}
+                  />
+                  <Text style={styles.statValue}>B+</Text>
+                  <Text style={styles.statLabel}>Blood</Text>
+                </View>
+                <View style={{ ...styles.statBox, marginTop: 6 }}>
+                  <FontAwesome
+                    name="handshake-o"
+                    size={24}
+                    color={theme.colors.redrose || "#ff5a5f"}
+                  />
+                  <Text style={styles.statValue}>256</Text>
+                  <Text style={styles.statLabel}>Appreciation</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Bio */}
+            <View style={styles.bioContainer}>
+              <Text style={styles.name}>Shweta Kumari</Text>
+              <Text style={styles.bio}>
+                🌍 Traveler | 📷 Photographer | 💻 Developer{"\n"}Life is about
+                creating stories. 🌟
+              </Text>
+            </View>
+
+            {/* Edit Profile Button */}
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </>
+        }
         renderItem={({ item }) => (
           <Image source={{ uri: item.image }} style={styles.postImage} />
         )}
         contentContainerStyle={styles.postsGrid}
       />
-    </ScrollView>
     </ScreenWrapper>
   );
 };
